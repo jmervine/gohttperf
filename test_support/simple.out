@@ -1,0 +1,24 @@
+httperf --server localhost
+Maximum connect burst length: 101
+
+Total: connections 102 requests 103 replies 104 test-duration 105.000 s
+
+Connection rate: 106.0 conn/s (107.0 ms/conn, <=1 concurrent connections)
+Connection time [ms]: min 108.0 avg 109.0 max 110.0 median 111.0 stddev 112.0
+Connection time [ms]: connect 113.0
+Connection length [replies/conn]: 114.000
+
+Request rate: 115.0 req/s (116.0 ms/req)
+Request size [B]: 117.0
+
+Reply rate [replies/s]: min 118.0 avg 119.0 max 120.0 stddev 121.0 (122 samples)
+Reply time [ms]: response 123 transfer 124
+Reply size [B]: header 125.0 content 126.0 footer 127.0 (total 128.0)
+Reply status: 1xx=129 2xx=130 3xx=131 4xx=132 5xx=133
+
+CPU time [s]: user 134.00 system 135.00 (user 136.0% system 137.0% total 138.0%)
+Net I/O: 139.0 KB/s (13.9*10^6 bps)
+
+Errors: total 140 client-timo 141 socket-timo 142 connrefused 143 connreset 144
+Errors: fd-unavail 145 addrunavail 146 ftab-full 147 other 148
+
