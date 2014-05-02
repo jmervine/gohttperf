@@ -1,6 +1,7 @@
 package gohttperf
 
 import (
+    "bytes"
     "fmt"
     "os"
     "regexp"
@@ -186,6 +187,43 @@ func TestRun(t *testing.T) {
     }
 }
 
+func TestForkAndWait(t *testing.T) {
+    httperf := HTTPerf{
+        Options: map[string]interface{}{
+            "server": "localhost",
+            "uri":    "/foo",
+            "hog":    true,
+        },
+    }
+
+    root, _ := os.Getwd()
+    httperf.Path = root + "/test_support/httperf"
+
+    var output bytes.Buffer
+
+    cmd, err := httperf.Fork(&output)
+
+    if err != nil {
+        t.Error("Expected no error.")
+    }
+
+    err = httperf.Wait(cmd, &output)
+
+    if err != nil {
+        t.Error("Expected no error.")
+    }
+
+    match, err := regexp.MatchString("^httperf ", httperf.Raw)
+
+    if err != nil {
+        t.Error("Expected no error.")
+    }
+
+    if !match {
+        t.Error("Expected match.")
+    }
+}
+
 func TestRunWithParser(t *testing.T) {
     httperf := HTTPerf{
         Options: map[string]interface{}{
@@ -200,6 +238,52 @@ func TestRunWithParser(t *testing.T) {
     httperf.Path = root + "/test_support/httperf"
 
     err := httperf.Run()
+
+    if err != nil {
+        t.Error("Expected no error.")
+    }
+
+    match, err := regexp.MatchString("^httperf ", httperf.Raw)
+
+    if err != nil {
+        t.Error("Expected no error.")
+    }
+
+    if !match {
+        t.Error("Expected match.")
+    }
+
+    if httperf.Results.TotalConnections != 1 {
+        t.Error("Expected 1, but got", httperf.Results.ConnectionRatePerSec)
+    }
+
+    if httperf.Results.ConnectionRatePerSec != 4524.6 {
+        t.Error("Expected 4524.6, but got", httperf.Results.ConnectionRatePerSec)
+    }
+}
+
+func TestForkAndWaitWithParser(t *testing.T) {
+    httperf := HTTPerf{
+        Options: map[string]interface{}{
+            "server": "localhost",
+            "uri":    "/foo",
+            "hog":    true,
+        },
+        Parser: true,
+    }
+
+    root, _ := os.Getwd()
+    httperf.Path = root + "/test_support/httperf"
+
+    var output bytes.Buffer
+
+    cmd, err := httperf.Fork(&output)
+
+    if err != nil {
+        t.Error("Expected no error.")
+    }
+
+    err = httperf.Wait(cmd, &output)
 
     if err != nil {
         t.Error("Expected no error.")
@@ -361,6 +445,54 @@ func ExampleHTTPerf_Run() {
     //
     //Errors: total 0 client-timo 0 socket-timo 0 connrefused 0 connreset 0
     //Errors: fd-unavail 0 addrunavail 0 ftab-full 0 other 0
+    //
+    //Parsed:
+    //-------
+    //QPS:  4524.6
+    //200s: 0
+}
+
+func ExampleHTTPerf_Fork() {
+    /* Define httperf arguments */
+    options := map[string]interface{}{
+        "server": "localhost",
+        "uri":    "/foo",
+        "hog":    true,
+    }
+
+    /* Create HTTPerf */
+    httperf := HTTPerf{
+        /* Stub path for testing. */
+        Path:    "./test_support/httperf",
+        Options: options,
+        Parser:  true,
+    }
+
+    /* Run httperf, catching any errors with return value. */
+    var output bytes.Buffer
+
+    cmd, err := httperf.Fork(&output)
+    deferred := func() {
+        if err := httperf.Wait(cmd, &output); err == nil {
+            /* Print selected results if successful. */
+            fmt.Println("Parsed:")
+            fmt.Println("-------")
+            fmt.Println("QPS: ", httperf.Results.ConnectionRatePerSec)
+            fmt.Println("200s:", httperf.Results.ReplyStatus2xx)
+        }
+    }
+
+    if err == nil {
+        defer deferred()
+    }
+
+    /**
+     * do something before calling wait
+     */
+    fmt.Println("I'm waiting...\n")
+
+    // Output:
+    //I'm waiting...
     //
     //Parsed:
     //-------

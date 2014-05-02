@@ -43,6 +43,55 @@ func (this *HTTPerf) Command() string
     "httperf --hog --verbose --server localhost"
 
 
+func (this *HTTPerf) Fork(output *bytes.Buffer) (*exec.Cmd, error)
+
+    Example:
+    /* Define httperf arguments */
+    options := map[string]interface{}{
+        "server": "localhost",
+        "uri":    "/foo",
+        "hog":    true,
+    }
+    
+    /* Create HTTPerf */
+    httperf := HTTPerf{
+        /* Stub path for testing. */
+        Path:    "./test_support/httperf",
+        Options: options,
+        Parser:  true,
+    }
+    
+    /* Run httperf, catching any errors with return value. */
+    var output bytes.Buffer
+    
+    cmd, err := httperf.Fork(&output)
+    deferred := func() {
+        if err := httperf.Wait(cmd, &output); err == nil {
+            /* Print selected results if successful. */
+            fmt.Println("Parsed:")
+            fmt.Println("-------")
+            fmt.Println("QPS: ", httperf.Results.ConnectionRatePerSec)
+            fmt.Println("200s:", httperf.Results.ReplyStatus2xx)
+        }
+    }
+    
+    if err == nil {
+        defer deferred()
+    }
+    
+    /**
+     * do something before calling wait
+     */
+    fmt.Println("I'm waiting...\n")
+    
+    // Output:
+    //I'm waiting...
+    //
+    //Parsed:
+    //-------
+    //QPS:  4524.6
+    //200s: 0
+
 func (this *HTTPerf) Parse()
     Run RawParser on a current instance of (*HTTPerf)
 
@@ -123,6 +172,9 @@ func (this *HTTPerf) Run() error
     //-------
     //QPS:  4524.6
     //200s: 0
+
+func (this *HTTPerf) Wait(cmd *exec.Cmd, output *bytes.Buffer) error
+
 
 type Results struct {
     Command               string

@@ -3,6 +3,8 @@
 package gohttperf
 
 import (
+    "bytes"
+    . "github.com/jmervine/sh"
     "os/exec"
     "strconv"
     "strings"
@@ -138,12 +140,31 @@ func (this *HTTPerf) Command() string {
 //
 //  Error if the command fails to execute.
 func (this *HTTPerf) Run() error {
-    result, err := exec.Command("sh", "-c", this.Command()).CombinedOutput()
+    result, err := Sh(this.Command())
     this.Raw = string(result[:])
 
     if this.Parser {
         // Sets this.Results to parsed Results struct.
         this.Parse()
+    }
+
+    return err
+}
+
+func (this *HTTPerf) Fork(output *bytes.Buffer) (*exec.Cmd, error) {
+    return ShFork(this.Command(), output)
+}
+
+func (this *HTTPerf) Wait(cmd *exec.Cmd, output *bytes.Buffer) error {
+    result, err := ShWait(cmd, output)
+
+    if err == nil {
+        this.Raw = result
+
+        if this.Parser {
+            // Sets this.Results to parsed Results struct.
+            this.Parse()
+        }
     }
 
     return err
