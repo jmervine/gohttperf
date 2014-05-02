@@ -25,6 +25,7 @@ docs: format .PHONY
 readme: test
 	# generating readme (quietly)
 	@echo '# gohttperf\n\n' > README.md
+	@echo '> Note: This should be consider experimental, for now.\n\n' > README.md
 	@echo '## Use' >> README.md
 	@echo '```\nimport "github.com/jmervine/gohttperf"\n```\n' >> README.md
 	@echo '## Documentation\n\n```' >> README.md

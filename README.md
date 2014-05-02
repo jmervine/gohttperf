@@ -1,4 +1,4 @@
-# gohttperf
+> Note: This should be consider experimental, for now.
 
 
 ## Use
@@ -197,6 +197,7 @@ func RawParser(raw string) Results
 SUBDIRECTORIES
 
     example
+    pkg
     test_support
 
 ```
