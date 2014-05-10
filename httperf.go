@@ -1,5 +1,56 @@
-// file: httperf.go - Main httperf package file.
+/*
 
+Package gohttperf is a simple wrapper for httperf.
+
+Basic Run Example:
+
+    // Define httperf arguments
+    options := map[string]interface{}{
+        "server": "localhost",
+        "uri":    "/foo",
+        "hog":    true,
+    }
+
+    // Create HTTPerf
+    httperf := HTTPerf{ Options: options }
+
+    // Run httperf, catching any errors with return value.
+    if err := httperf.Run(); err == nil {
+        fmt.Print(httperf.Raw)
+    }
+
+    // Turn on Parser
+    httperf.Parser = true
+
+    // Run httperf, catching any errors with return value.
+    if err := httperf.Run(); err == nil {
+        fmt.Println("QPS: ", httperf.Results.ConnectionRatePerSec)
+        fmt.Println("200s:", httperf.Results.ReplyStatus2xx)
+    }
+
+
+Basic Fork Example:
+
+    var output bytes.Buffer
+
+    cmd, err := httperf.Fork(&output)
+    deferred := func() {
+        if err := httperf.Wait(cmd, &output); err == nil {
+            fmt.Println("Parsed:")
+            fmt.Println("-------")
+            fmt.Println("QPS: ", httperf.Results.ConnectionRatePerSec)
+            fmt.Println("200s:", httperf.Results.ReplyStatus2xx)
+        }
+    }
+
+    if err == nil {
+        defer deferred()
+    }
+
+    // do something before calling wait
+    fmt.Println("I'm waiting...\n")
+
+*/
 package gohttperf
 
 import (

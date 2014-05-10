@@ -168,7 +168,7 @@ func TestRun(t *testing.T) {
     }
 
     root, _ := os.Getwd()
-    httperf.Path = root + "/test_support/httperf"
+    httperf.Path = root + "/_support/httperf"
 
     err := httperf.Run()
 
@@ -197,7 +197,7 @@ func TestForkAndWait(t *testing.T) {
     }
 
     root, _ := os.Getwd()
-    httperf.Path = root + "/test_support/httperf"
+    httperf.Path = root + "/_support/httperf"
 
     var output bytes.Buffer
 
@@ -235,7 +235,7 @@ func TestRunWithParser(t *testing.T) {
     }
 
     root, _ := os.Getwd()
-    httperf.Path = root + "/test_support/httperf"
+    httperf.Path = root + "/_support/httperf"
 
     err := httperf.Run()
 
@@ -273,7 +273,7 @@ func TestForkAndWaitWithParser(t *testing.T) {
     }
 
     root, _ := os.Getwd()
-    httperf.Path = root + "/test_support/httperf"
+    httperf.Path = root + "/_support/httperf"
 
     var output bytes.Buffer
 
@@ -319,7 +319,7 @@ func TestRunVerbose(t *testing.T) {
     }
 
     root, _ := os.Getwd()
-    httperf.Path = root + "/test_support/httperf"
+    httperf.Path = root + "/_support/httperf"
 
     err := httperf.Run()
 
@@ -350,7 +350,7 @@ func TestRunVerboseWithParser(t *testing.T) {
     }
 
     root, _ := os.Getwd()
-    httperf.Path = root + "/test_support/httperf"
+    httperf.Path = root + "/_support/httperf"
 
     err := httperf.Run()
 
@@ -392,7 +392,7 @@ func ExampleHTTPerf_Run() {
     /* Create HTTPerf */
     httperf := HTTPerf{
         /* Stub path for testing. */
-        Path:    "./test_support/httperf",
+        Path:    "./_support/httperf",
         Options: options,
     }
 
@@ -403,19 +403,6 @@ func ExampleHTTPerf_Run() {
     if err := httperf.Run(); err == nil {
         /* Print raw results (stdout and stderr) if successful. */
         fmt.Print(httperf.Raw)
-    }
-
-    fmt.Println("Parsed:")
-    fmt.Println("-------")
-
-    /* Turn on Parser */
-    httperf.Parser = true
-
-    /* Run httperf, catching any errors with return value. */
-    if err := httperf.Run(); err == nil {
-        /* Print selected results if successful. */
-        fmt.Println("QPS: ", httperf.Results.ConnectionRatePerSec)
-        fmt.Println("200s:", httperf.Results.ReplyStatus2xx)
     }
 
     // Output:
@@ -445,11 +432,6 @@ func ExampleHTTPerf_Run() {
     //
     //Errors: total 0 client-timo 0 socket-timo 0 connrefused 0 connreset 0
     //Errors: fd-unavail 0 addrunavail 0 ftab-full 0 other 0
-    //
-    //Parsed:
-    //-------
-    //QPS:  4524.6
-    //200s: 0
 }
 
 func ExampleHTTPerf_Fork() {
@@ -463,7 +445,7 @@ func ExampleHTTPerf_Fork() {
     /* Create HTTPerf */
     httperf := HTTPerf{
         /* Stub path for testing. */
-        Path:    "./test_support/httperf",
+        Path:    "./_support/httperf",
         Options: options,
         Parser:  true,
     }
@@ -472,6 +454,7 @@ func ExampleHTTPerf_Fork() {
     var output bytes.Buffer
 
     cmd, err := httperf.Fork(&output)
+
     deferred := func() {
         if err := httperf.Wait(cmd, &output); err == nil {
             /* Print selected results if successful. */
@@ -486,9 +469,7 @@ func ExampleHTTPerf_Fork() {
         defer deferred()
     }
 
-    /**
-     * do something before calling wait
-     */
+    /* do something before calling wait */
     fmt.Println("I'm waiting...\n")
 
     // Output:

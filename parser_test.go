@@ -355,7 +355,7 @@ func TestRawParserVerbose(t *testing.T) {
 // test helpers
 func loadSampleOutput(f string) string {
     root, _ := os.Getwd()
-    content, err := ioutil.ReadFile(root + "/test_support/" + f)
+    content, err := ioutil.ReadFile(root + "/_support/" + f)
     if err != nil {
         panic(err)
     }
