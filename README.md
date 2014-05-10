@@ -79,9 +79,9 @@ type HTTPerf struct {
 #### Command
 
 ```go
-func (this *HTTPerf) Command() string
+func (h *HTTPerf) Command() string
 ```
-Returns (*HTTPerf).Path + (*HTTPerf).arguments()
+Command returns (*HTTPerf).Path + (*HTTPerf).arguments()
 
      When:
      (*HTTPerf).Path = "httperf" // the default
@@ -98,8 +98,11 @@ Returns (*HTTPerf).Path + (*HTTPerf).arguments()
 #### Fork
 
 ```go
-func (this *HTTPerf) Fork(output *bytes.Buffer) (*exec.Cmd, error)
+func (h *HTTPerf) Fork(output *bytes.Buffer) (*exec.Cmd, error)
 ```
+Fork executes the command string returned by (*HTTPerf).Command() on the shell
+in a async manner, returning the *exec.Cmd pointer to be referenced in Wait when
+ready to gather results.
 
 
 
@@ -153,18 +156,18 @@ func (this *HTTPerf) Fork(output *bytes.Buffer) (*exec.Cmd, error)
 #### Parse
 
 ```go
-func (this *HTTPerf) Parse()
+func (h *HTTPerf) Parse()
 ```
-Run RawParser on a current instance of (*HTTPerf)
+Parse runs RawParser on a current instance of (*HTTPerf).Raw
 
 
 
 #### Run
 
 ```go
-func (this *HTTPerf) Run() error
+func (h *HTTPerf) Run() error
 ```
-Executes the command string returned by (*HTTPerf).Command() on the shell.
+Run executes the command string returned by (*HTTPerf).Command() on the shell.
 
     Returns:
     Error if the command fails to execute.
@@ -227,8 +230,10 @@ Executes the command string returned by (*HTTPerf).Command() on the shell.
 #### Wait
 
 ```go
-func (this *HTTPerf) Wait(cmd *exec.Cmd, output *bytes.Buffer) error
+func (h *HTTPerf) Wait(cmd *exec.Cmd, output *bytes.Buffer) error
 ```
+Wait takes the *exec.Cmd returned by Fork and waits for it to complete it's run,
+on completion it sets (*HTTPerf).Raw and runs the parser if requested.
 
 
 
@@ -270,11 +275,11 @@ type Results struct {
     ReplyStatus3xx        int
     ReplyStatus4xx        int
     ReplyStatus5xx        int
-    CpuTimeUserSec        float64
-    CpuTimeSystemSec      float64
-    CpuTimeUserPct        float64
-    CpuTimeSystemPct      float64
-    CpuTimeTotalPct       float64
+    CPUTimeUserSec        float64
+    CPUTimeSystemSec      float64
+    CPUTimeUserPct        float64
+    CPUTimeSystemPct      float64
+    CPUTimeTotalPct       float64
     NetIoKbSec            float64
     NetIoBps              string
     ErrorsTotal           int
@@ -305,8 +310,8 @@ type Results struct {
 ```go
 func RawParser(raw string) Results
 ```
-Parse httperf results as printed to STDOUT on run. Push results to a new Results
-struct and return it.
+RawParser parses httperf results as printed to STDOUT on run. Push results to a
+new Results struct and return it.
 
 
 

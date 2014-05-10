@@ -114,20 +114,20 @@ func TestParser(t *testing.T) {
     if 133 != results.ReplyStatus5xx {
         t.Error("Unexpected parse value: ", results.ReplyStatus5xx)
     }
-    if 134.0 != results.CpuTimeUserSec {
-        t.Error("Unexpected parse value: ", results.CpuTimeUserPct)
+    if 134.0 != results.CPUTimeUserSec {
+        t.Error("Unexpected parse value: ", results.CPUTimeUserPct)
     }
-    if 135.0 != results.CpuTimeSystemSec {
-        t.Error("Unexpected parse value: ", results.CpuTimeSystemSec)
+    if 135.0 != results.CPUTimeSystemSec {
+        t.Error("Unexpected parse value: ", results.CPUTimeSystemSec)
     }
-    if 136.0 != results.CpuTimeUserPct {
-        t.Error("Unexpected parse value: ", results.CpuTimeUserPct)
+    if 136.0 != results.CPUTimeUserPct {
+        t.Error("Unexpected parse value: ", results.CPUTimeUserPct)
     }
-    if 137.0 != results.CpuTimeSystemPct {
-        t.Error("Unexpected parse value: ", results.CpuTimeSystemPct)
+    if 137.0 != results.CPUTimeSystemPct {
+        t.Error("Unexpected parse value: ", results.CPUTimeSystemPct)
     }
-    if 138.0 != results.CpuTimeTotalPct {
-        t.Error("Unexpected parse value: ", results.CpuTimeTotalPct)
+    if 138.0 != results.CPUTimeTotalPct {
+        t.Error("Unexpected parse value: ", results.CPUTimeTotalPct)
     }
     if 139.0 != results.NetIoKbSec {
         t.Error("Unexpected parse value: ", results.NetIoKbSec)
@@ -270,20 +270,20 @@ func TestRawParser(t *testing.T) {
     if 133 != results.ReplyStatus5xx {
         t.Error("Unexpected parse value: ", results.ReplyStatus5xx)
     }
-    if 134.0 != results.CpuTimeUserSec {
-        t.Error("Unexpected parse value: ", results.CpuTimeUserPct)
+    if 134.0 != results.CPUTimeUserSec {
+        t.Error("Unexpected parse value: ", results.CPUTimeUserPct)
     }
-    if 135.0 != results.CpuTimeSystemSec {
-        t.Error("Unexpected parse value: ", results.CpuTimeSystemSec)
+    if 135.0 != results.CPUTimeSystemSec {
+        t.Error("Unexpected parse value: ", results.CPUTimeSystemSec)
     }
-    if 136.0 != results.CpuTimeUserPct {
-        t.Error("Unexpected parse value: ", results.CpuTimeUserPct)
+    if 136.0 != results.CPUTimeUserPct {
+        t.Error("Unexpected parse value: ", results.CPUTimeUserPct)
     }
-    if 137.0 != results.CpuTimeSystemPct {
-        t.Error("Unexpected parse value: ", results.CpuTimeSystemPct)
+    if 137.0 != results.CPUTimeSystemPct {
+        t.Error("Unexpected parse value: ", results.CPUTimeSystemPct)
     }
-    if 138.0 != results.CpuTimeTotalPct {
-        t.Error("Unexpected parse value: ", results.CpuTimeTotalPct)
+    if 138.0 != results.CPUTimeTotalPct {
+        t.Error("Unexpected parse value: ", results.CPUTimeTotalPct)
     }
     if 139.0 != results.NetIoKbSec {
         t.Error("Unexpected parse value: ", results.NetIoKbSec)

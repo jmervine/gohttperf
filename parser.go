@@ -38,11 +38,11 @@ type Results struct {
     ReplyStatus3xx        int
     ReplyStatus4xx        int
     ReplyStatus5xx        int
-    CpuTimeUserSec        float64
-    CpuTimeSystemSec      float64
-    CpuTimeUserPct        float64
-    CpuTimeSystemPct      float64
-    CpuTimeTotalPct       float64
+    CPUTimeUserSec        float64
+    CPUTimeSystemSec      float64
+    CPUTimeUserPct        float64
+    CPUTimeSystemPct      float64
+    CPUTimeTotalPct       float64
     NetIoKbSec            float64
     NetIoBps              string
     ErrorsTotal           int
@@ -63,12 +63,12 @@ type Results struct {
     ConnectionTime99Pct   float64
 }
 
-// Run RawParser on a current instance of (*HTTPerf)
-func (this *HTTPerf) Parse() {
-    this.Results = RawParser(this.Raw)
+// Parse runs RawParser on a current instance of (*HTTPerf).Raw
+func (h *HTTPerf) Parse() {
+    h.Results = RawParser(h.Raw)
 }
 
-// Parse httperf results as printed to STDOUT on run. Push results to
+// RawParser parses httperf results as printed to STDOUT on run. Push results to
 // a new Results struct and return it.
 func RawParser(raw string) Results {
     results := Results{}
@@ -106,11 +106,11 @@ func RawParser(raw string) Results {
     results.ReplyStatus3xx = toI(find(raw, "^Reply status: .+ 3xx=([0-9]*?\\.?[0-9]+) "))
     results.ReplyStatus4xx = toI(find(raw, "^Reply status: .+ 4xx=([0-9]*?\\.?[0-9]+) "))
     results.ReplyStatus5xx = toI(find(raw, "^Reply status: .+ 5xx=([0-9]*?\\.?[0-9]+)"))
-    results.CpuTimeUserSec = toF(find(raw, "^CPU time \\[s\\]: user ([0-9]*?\\.?[0-9]+) "))
-    results.CpuTimeUserPct = toF(find(raw, "^CPU time \\[s\\]: .+ \\(user ([0-9]*?\\.?[0-9]+)\\% "))
-    results.CpuTimeSystemSec = toF(find(raw, "^CPU time \\[s\\]: .+ system ([0-9]*?\\.?[0-9]+) "))
-    results.CpuTimeSystemPct = toF(find(raw, "^CPU time \\[s\\]: user .+ system .+ system ([0-9]*?\\.?[0-9]+)\\% "))
-    results.CpuTimeTotalPct = toF(find(raw, "^CPU time \\[s\\]: user .+ total ([0-9]*?\\.?[0-9]+)\\%"))
+    results.CPUTimeUserSec = toF(find(raw, "^CPU time \\[s\\]: user ([0-9]*?\\.?[0-9]+) "))
+    results.CPUTimeUserPct = toF(find(raw, "^CPU time \\[s\\]: .+ \\(user ([0-9]*?\\.?[0-9]+)\\% "))
+    results.CPUTimeSystemSec = toF(find(raw, "^CPU time \\[s\\]: .+ system ([0-9]*?\\.?[0-9]+) "))
+    results.CPUTimeSystemPct = toF(find(raw, "^CPU time \\[s\\]: user .+ system .+ system ([0-9]*?\\.?[0-9]+)\\% "))
+    results.CPUTimeTotalPct = toF(find(raw, "^CPU time \\[s\\]: user .+ total ([0-9]*?\\.?[0-9]+)\\%"))
     results.NetIoKbSec = toF(find(raw, "^Net I\\/O: ([0-9]*?\\.?[0-9]+) KB"))
     results.NetIoBps = toS(find(raw, "^Net I\\/O: .+ \\((.+) bps\\)"))
     results.ErrorsTotal = toI(find(raw, "^Errors: total ([0-9]*?\\.?[0-9]+) "))

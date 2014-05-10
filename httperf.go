@@ -55,13 +55,13 @@ package gohttperf
 
 import (
     "bytes"
-    . "github.com/jmervine/sh"
+    "github.com/jmervine/sh"
     "os/exec"
     "strconv"
     "strings"
 )
 
-// Main HTTPerf struct, (almost) all things use this.
+// HTTPerf is the main data struct, (almost) all things use h.
 type HTTPerf struct {
     Options map[string]interface{}
     Path    string
@@ -82,7 +82,7 @@ type HTTPerf struct {
 //  Returns:
 //
 //  "--hog --verbose --server localhost"
-func (this *HTTPerf) arguments() string {
+func (h *HTTPerf) arguments() string {
     var params = map[string]interface{}{
         "hog":              false,
         "verbose":          false,
@@ -123,7 +123,7 @@ func (this *HTTPerf) arguments() string {
     }
 
     var args []string
-    for key, val := range this.Options {
+    for key, val := range h.Options {
         if _, ok := params[key]; ok {
             params[key] = val
         }
@@ -157,7 +157,7 @@ func (this *HTTPerf) arguments() string {
     return strings.Join(args, " ")
 }
 
-// Returns (*HTTPerf).Path + (*HTTPerf).arguments()
+// Command returns (*HTTPerf).Path + (*HTTPerf).arguments()
 //
 //   When:
 //   (*HTTPerf).Path = "httperf" // the default
@@ -170,51 +170,53 @@ func (this *HTTPerf) arguments() string {
 //  Returns:
 //
 //  "httperf --hog --verbose --server localhost"
-func (this *HTTPerf) Command() string {
+func (h *HTTPerf) Command() string {
     cmd := ""
 
-    if this.Path == "" {
+    if h.Path == "" {
         cmd += "httperf"
     } else {
-        cmd += this.Path
+        cmd += h.Path
     }
 
     cmd += " "
-    cmd += this.arguments()
+    cmd += h.arguments()
     return cmd
 }
 
-// Executes the command string returned by (*HTTPerf).Command()
+// Run executes the command string returned by (*HTTPerf).Command()
 // on the shell.
-//
-//  Returns:
-//
-//  Error if the command fails to execute.
-func (this *HTTPerf) Run() error {
-    result, err := Sh(this.Command())
-    this.Raw = string(result[:])
+func (h *HTTPerf) Run() error {
+    result, err := sh.Sh(h.Command())
+    h.Raw = string(result[:])
 
-    if this.Parser {
-        // Sets this.Results to parsed Results struct.
-        this.Parse()
+    if h.Parser {
+        // Sets h.Results to parsed Results struct.
+        h.Parse()
     }
 
     return err
 }
 
-func (this *HTTPerf) Fork(output *bytes.Buffer) (*exec.Cmd, error) {
-    return ShFork(this.Command(), output)
+// Fork executes the command string returned by (*HTTPerf).Command()
+// on the shell in a async manner, returning the *exec.Cmd pointer
+// to be referenced in Wait when ready to gather results.
+func (h *HTTPerf) Fork(output *bytes.Buffer) (*exec.Cmd, error) {
+    return sh.ShFork(h.Command(), output)
 }
 
-func (this *HTTPerf) Wait(cmd *exec.Cmd, output *bytes.Buffer) error {
-    result, err := ShWait(cmd, output)
+// Wait takes the *exec.Cmd returned by Fork and waits for it to complete
+// it's run, on completion it sets (*HTTPerf).Raw and runs the parser
+// if requested.
+func (h *HTTPerf) Wait(cmd *exec.Cmd, output *bytes.Buffer) error {
+    result, err := sh.ShWait(cmd, output)
 
     if err == nil {
-        this.Raw = result
+        h.Raw = result
 
-        if this.Parser {
-            // Sets this.Results to parsed Results struct.
-            this.Parse()
+        if h.Parser {
+            // Sets h.Results to parsed Results struct.
+            h.Parse()
         }
     }
 

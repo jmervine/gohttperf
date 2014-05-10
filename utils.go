@@ -16,15 +16,15 @@ import (
 // httperf found at https://github.com/jmervine/httperf) this method
 // will be run to calculate the 75th, 80th, 85th, 90th, 95th and 99th
 // percentiles of the run.
-func (this *Results) calculatePercentiles() {
-    times := this.ConnectionTimes
+func (r *Results) calculatePercentiles() {
+    times := r.ConnectionTimes
     if len(times) > 0 {
-        this.ConnectionTime75Pct = percentile(times, 75)
-        this.ConnectionTime80Pct = percentile(times, 80)
-        this.ConnectionTime85Pct = percentile(times, 85)
-        this.ConnectionTime90Pct = percentile(times, 90)
-        this.ConnectionTime95Pct = percentile(times, 95)
-        this.ConnectionTime99Pct = percentile(times, 99)
+        r.ConnectionTime75Pct = percentile(times, 75)
+        r.ConnectionTime80Pct = percentile(times, 80)
+        r.ConnectionTime85Pct = percentile(times, 85)
+        r.ConnectionTime90Pct = percentile(times, 90)
+        r.ConnectionTime95Pct = percentile(times, 95)
+        r.ConnectionTime99Pct = percentile(times, 99)
     }
 }
 
