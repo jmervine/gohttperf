@@ -1,7 +1,7 @@
 
 # gohttperf
 
-[![GoDoc](https://godoc.org/github.com/jmervine/gohttperf?status.png)](https://godoc.org/github.com/jmervine/gohttperf)
+[![GoDoc](https://godoc.org/github.com/jmervine/gohttperf?status.png)](https://godoc.org/github.com/jmervine/gohttperf)    [![Build Status](https://travis-ci.org/jmervine/gohttperf.svg?branch=master)](https://travis-ci.org/jmervine/gohttperf)
 
 #### Go Port of [HTTPerf.rb](https://github.com/jmervine/httperfrb)
 
@@ -168,9 +168,6 @@ Parse runs RawParser on a current instance of (*HTTPerf).Raw
 func (h *HTTPerf) Run() error
 ```
 Run executes the command string returned by (*HTTPerf).Command() on the shell.
-
-    Returns:
-    Error if the command fails to execute.
 
 
 
