@@ -1,5 +1,8 @@
 language: go
 
+install:
+  - go get github.com/jmervine/sh
+
 go:
   - 1.0
   - 1.1

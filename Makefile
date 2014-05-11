@@ -22,7 +22,7 @@ format: .PHONY
 	gofmt -tabs=false -tabwidth=4 -w=true -l=true *.go
 
 get: .PHONY
-	go test -i
+	go get github.com/jmervine/sh
 
 docs: format .PHONY
 	@godoc -ex=true -tabwidth=2 . | sed -e 's/func /\nfunc /g' | less
