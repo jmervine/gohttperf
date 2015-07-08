@@ -1,7 +1,7 @@
 language: go
 
 install:
-  - go get github.com/jmervine/sh
+  - go get github.com/jmervine/exec
 
 go:
   - 1.2
