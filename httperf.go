@@ -54,20 +54,19 @@ Basic Fork Example:
 package gohttperf
 
 import (
-    "bytes"
-    "github.com/jmervine/sh"
-    "os/exec"
-    "strconv"
-    "strings"
+	"github.com/jmervine/exec/v2"
+	"strconv"
+	"strings"
 )
 
 // HTTPerf is the main data struct, (almost) all things use h.
 type HTTPerf struct {
-    Options map[string]interface{}
-    Path    string
-    Parser  bool
-    Raw     string
-    Results Results
+	Options map[string]interface{}
+	Path    string
+	Parser  bool
+	Raw     string
+	Results Results
+	wait    func() ([]byte, error)
 }
 
 // Turns (*HTTPerf).Options to a string of command line arguments.
@@ -83,78 +82,78 @@ type HTTPerf struct {
 //
 //  "--hog --verbose --server localhost"
 func (h *HTTPerf) arguments() string {
-    var params = map[string]interface{}{
-        "hog":              false,
-        "verbose":          false,
-        "add-header":       nil,
-        "burst-length":     nil,
-        "client":           nil,
-        "close-with-reset": nil,
-        "debug":            nil,
-        "failure-status":   nil,
-        "http-version":     nil,
-        "max-connections":  nil,
-        "max-piped-calls":  nil,
-        "method":           nil,
-        "no-host-hdr":      nil,
-        "num-calls":        nil,
-        "num-conns":        nil,
-        "period":           nil,
-        "port":             nil,
-        "print-reply":      nil,
-        "print-request":    nil,
-        "rate":             nil,
-        "recv-buffer":      nil,
-        "retry-on-failure": nil,
-        "send-buffer":      nil,
-        "server":           nil,
-        "server-name":      nil,
-        "session-cookies":  nil,
-        "ssl":              nil,
-        "ssl-ciphers":      nil,
-        "ssl-no-reuse":     nil,
-        "think-timeout":    nil,
-        "timeout":          nil,
-        "uri":              nil,
-        "wlog":             nil,
-        "wsess":            nil,
-        "wsesslog":         nil,
-        "wset":             nil,
-    }
+	var params = map[string]interface{}{
+		"hog":              false,
+		"verbose":          false,
+		"add-header":       nil,
+		"burst-length":     nil,
+		"client":           nil,
+		"close-with-reset": nil,
+		"debug":            nil,
+		"failure-status":   nil,
+		"http-version":     nil,
+		"max-connections":  nil,
+		"max-piped-calls":  nil,
+		"method":           nil,
+		"no-host-hdr":      nil,
+		"num-calls":        nil,
+		"num-conns":        nil,
+		"period":           nil,
+		"port":             nil,
+		"print-reply":      nil,
+		"print-request":    nil,
+		"rate":             nil,
+		"recv-buffer":      nil,
+		"retry-on-failure": nil,
+		"send-buffer":      nil,
+		"server":           nil,
+		"server-name":      nil,
+		"session-cookies":  nil,
+		"ssl":              nil,
+		"ssl-ciphers":      nil,
+		"ssl-no-reuse":     nil,
+		"think-timeout":    nil,
+		"timeout":          nil,
+		"uri":              nil,
+		"wlog":             nil,
+		"wsess":            nil,
+		"wsesslog":         nil,
+		"wset":             nil,
+	}
 
-    var args []string
-    for key, val := range h.Options {
-        if _, ok := params[key]; ok {
-            params[key] = val
-        }
-    }
+	var args []string
+	for key, val := range h.Options {
+		if _, ok := params[key]; ok {
+			params[key] = val
+		}
+	}
 
-    for key, val := range params {
-        var arg string
+	for key, val := range params {
+		var arg string
 
-        if val == nil || val == false {
-            continue
-        }
+		if val == nil || val == false {
+			continue
+		}
 
-        if key == "uri" {
-            args = append(args, "--uri '"+val.(string)+"'")
-            continue
-        }
+		if key == "uri" {
+			args = append(args, "--uri '"+val.(string)+"'")
+			continue
+		}
 
-        switch val.(type) {
-        case bool:
-            if val.(bool) {
-                arg = "--" + key
-            }
-        case int:
-            arg = "--" + key + " " + strconv.Itoa(val.(int))
-        case string:
-            arg = "--" + key + " " + val.(string)
-        }
-        args = append(args, arg)
-    }
+		switch val.(type) {
+		case bool:
+			if val.(bool) {
+				arg = "--" + key
+			}
+		case int:
+			arg = "--" + key + " " + strconv.Itoa(val.(int))
+		case string:
+			arg = "--" + key + " " + val.(string)
+		}
+		args = append(args, arg)
+	}
 
-    return strings.Join(args, " ")
+	return strings.Join(args, " ")
 }
 
 // Command returns (*HTTPerf).Path + (*HTTPerf).arguments()
@@ -171,54 +170,57 @@ func (h *HTTPerf) arguments() string {
 //
 //  "httperf --hog --verbose --server localhost"
 func (h *HTTPerf) Command() string {
-    cmd := ""
+	cmd := ""
 
-    if h.Path == "" {
-        cmd += "httperf"
-    } else {
-        cmd += h.Path
-    }
+	if h.Path == "" {
+		cmd += "httperf"
+	} else {
+		cmd += h.Path
+	}
 
-    cmd += " "
-    cmd += h.arguments()
-    return cmd
+	cmd += " "
+	cmd += h.arguments()
+	return cmd
 }
 
 // Run executes the command string returned by (*HTTPerf).Command()
 // on the shell.
 func (h *HTTPerf) Run() error {
-    result, err := sh.Sh(h.Command())
-    h.Raw = string(result[:])
+	result, err := exec.X(h.Command())
+	h.Raw = string(result[:])
 
-    if h.Parser {
-        // Sets h.Results to parsed Results struct.
-        h.Parse()
-    }
+	if h.Parser {
+		// Sets h.Results to parsed Results struct.
+		h.Parse()
+	}
 
-    return err
+	return err
 }
 
 // Fork executes the command string returned by (*HTTPerf).Command()
-// on the shell in a async manner, returning the *exec.Cmd pointer
-// to be referenced in Wait when ready to gather results.
-func (h *HTTPerf) Fork(output *bytes.Buffer) (*exec.Cmd, error) {
-    return sh.ShFork(h.Command(), output)
+// on the shell in a async manner. (*HTTPerf).Wait() once referenced will
+// reattach and gather results once completed.
+func (h *HTTPerf) Fork() (err error) {
+	if h.Path == "" {
+		h.Path = "httperf"
+	}
+	h.wait, err = exec.Fork(h.Path, h.arguments())
+	return err
 }
 
-// Wait takes the *exec.Cmd returned by Fork and waits for it to complete
-// it's run, on completion it sets (*HTTPerf).Raw and runs the parser
-// if requested.
-func (h *HTTPerf) Wait(cmd *exec.Cmd, output *bytes.Buffer) error {
-    result, err := sh.ShWait(cmd, output)
+// Wait waits for Fork to finish and on completion it sets (*HTTPerf).Raw,
+// running the parser if requested.
+func (h *HTTPerf) Wait() (err error) {
+	result, err := h.wait()
 
-    if err == nil {
-        h.Raw = result
+	if err == nil {
+		h.Raw = string(result)
 
-        if h.Parser {
-            // Sets h.Results to parsed Results struct.
-            h.Parse()
-        }
-    }
+		if h.Parser {
+			// Sets h.Results to parsed Results struct.
+			h.Parse()
+		}
+	}
 
-    return err
+	return err
 }
