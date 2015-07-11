@@ -1,0 +1,11 @@
+{
+	"ImportPath": "github.com/jmervine/gohttperf",
+	"GoVersion": "go1.3.3",
+	"Deps": [
+		{
+			"ImportPath": "gopkg.in/jmervine/exec.v2",
+			"Comment": "v2",
+			"Rev": "25b66242a73a0f8979638d9c7c322fc25141a547"
+		}
+	]
+}

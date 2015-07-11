@@ -13,3 +13,12 @@
 ```go
 import "gopkg.in/jmervine/httperf.v1"
 ```
+
+### Development Notes
+
+1. When forking, create the following symlink to support [gopkg.in](http://gopkg.in/).
+
+```
+mkdir -p $(go env GOPATH)/src/gopkg.in/jmervine
+ln -s ${GIT_CLONE_PATH} $(go env GOPATH)/src/gopkg.in/jmervine/gohttperf.v1
+```

@@ -54,7 +54,7 @@ Basic Fork Example:
 package gohttperf
 
 import (
-	"github.com/jmervine/exec/v2"
+	"gopkg.in/jmervine/gohttperf.v1/Godeps/_workspace/src/gopkg.in/jmervine/exec.v2"
 	"strconv"
 	"strings"
 )
